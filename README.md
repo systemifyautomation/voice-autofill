@@ -1,6 +1,6 @@
 # Voice Auto-fill — Chrome Extension
 
-Add a voice button to **any text input** on any webpage. Click the mic, speak, and the transcription (powered by **OpenAI Whisper**) is inserted automatically — no copy-paste needed.
+Add a voice button to the text fields you choose on any webpage. Click the mic, speak, and the transcription (powered by **OpenAI Whisper**) is inserted automatically — no copy-paste needed.
 
 ---
 
@@ -19,7 +19,9 @@ Add a voice button to **any text input** on any webpage. Click the mic, speak, a
 ## 1. How It Works
 
 ```
-Focus any <input> or <textarea> on any webpage
+Focus the input or textarea you want to use
+        ↓
+Enable voice controls for that field from the popup (or press Alt+Shift+V)
         ↓
 A small 🎤 button appears at the right edge of that field
         ↓
@@ -97,13 +99,16 @@ Paste your key into the **OpenAI API Key** field and click **Save**.
 
 ### Basic usage
 
-1. **Click any text field** on a webpage (input, textarea, search box, compose window, etc.)
-2. A small **blue 🎤 button** appears at the right edge of the field
-3. **Click 🎤** — Chrome will ask for microphone permission the first time (allow it)
-4. **Speak** — the button turns red and pulses while recording
-5. **Click ⏹** to stop recording
-6. The button turns orange while Whisper processes the audio (1–3 seconds)
-7. The transcription is **inserted directly into the field** at the cursor position
+1. **Click the text field** you want to use (input, textarea, search box, compose window, etc.)
+2. Open the extension popup and choose **Enable on focused field**, or press **Alt+Shift+V** while the field is focused
+3. A small **blue 🎤 button** appears at the right edge of that field; other text fields stay clear
+4. **Click 🎤** — Chrome will ask for microphone permission the first time (allow it)
+5. **Speak** — the button turns red and pulses while recording
+6. **Click ⏹** to stop recording
+7. The button turns orange while Whisper processes the audio (1–3 seconds)
+8. The transcription is **inserted directly into the field** at the cursor position
+
+Use the **ON/OFF** button at the top of the popup to disable all in-page voice controls immediately. This does not disable the popup's Quick Record tool.
 
 ### Visual indicators
 
@@ -134,6 +139,7 @@ All settings are in the extension popup (click the toolbar icon).
 | Setting | Where | Description |
 |---|---|---|
 | OpenAI API Key | Popup | `sk-…` key for Whisper API calls |
+| Field controls | Popup header | Turns all in-page controls on or off. When on, controls appear only on fields you explicitly enable. |
 
 ---
 

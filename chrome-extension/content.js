@@ -18,6 +18,9 @@
   let recordingStartTime = 0;
   let hideTimer = null;
   let voiceMode = 'transcription'; // 'transcription' | 'prompt'
+  let fieldControlsEnabled = false;
+  let lastTextInput = null;
+  const activatedInputs = new WeakSet();
 
   // ---- Extension context guard --------------------------------------------
 
@@ -32,11 +35,19 @@
     }
   }
 
-  // Load persisted mode
+  // Load persisted preferences. Controls stay hidden until this completes so
+  // they never flash on every field while the page is loading.
   try {
-    chrome.storage.local.get({ voiceMode: 'transcription' }, ({ voiceMode: stored }) => {
+    chrome.storage.local.get({ voiceMode: 'transcription', fieldControlsEnabled: true }, ({ voiceMode: stored, fieldControlsEnabled: enabled }) => {
       voiceMode = stored;
+      fieldControlsEnabled = enabled;
       updateDropdownItems();
+    });
+
+    chrome.storage.onChanged.addListener((changes, area) => {
+      if (area !== 'local' || !changes.fieldControlsEnabled) return;
+      fieldControlsEnabled = changes.fieldControlsEnabled.newValue !== false;
+      if (!fieldControlsEnabled) stopInPageActivity();
     });
   } catch (_) {}
 
@@ -257,17 +268,41 @@
     if (hideTimer) clearTimeout(hideTimer);
     hideTimer = setTimeout(() => {
       if (!isRecording && !isProcessing && !dropdownVisible) {
-        if (micButton)    micButton.style.display    = 'none';
-        if (chevronBtn)   chevronBtn.style.display   = 'none';
-        if (cancelButton) cancelButton.style.display = 'none';
+        hideControls();
         activeInput = null;
       }
       hideTimer = null;
     }, 250);
   }
 
+  function hideControls() {
+    hideDropdown();
+    if (micButton)    micButton.style.display    = 'none';
+    if (chevronBtn)   chevronBtn.style.display   = 'none';
+    if (cancelButton) cancelButton.style.display = 'none';
+  }
+
+  function stopInPageActivity() {
+    cancelled = true;
+    if (isRecording && mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.onstop = () => {
+        if (activeStream) activeStream.getTracks().forEach(track => track.stop());
+      };
+      mediaRecorder.stop();
+    }
+    if (activeStream && !isRecording) activeStream.getTracks().forEach(track => track.stop());
+    isRecording = false;
+    isProcessing = false;
+    resetMicButton();
+    hideControls();
+  }
+
   // Show/hide the active (recording/processing) state
   function setActiveState(active) {
+    if (!fieldControlsEnabled) {
+      hideControls();
+      return;
+    }
     if (chevronBtn)   chevronBtn.style.display   = active ? 'none' : 'flex';
     if (cancelButton) cancelButton.style.display = active ? 'flex' : 'none';
     if (active) hideDropdown();
@@ -306,13 +341,27 @@
     if (!cancelButton) cancelButton = createCancelButton();
   }
 
+  function showControlsFor(input) {
+    if (!fieldControlsEnabled || !input || !activatedInputs.has(input)) return;
+    cancelHideTimer();
+    activeInput = input;
+    ensureButtons();
+    positionButtons(input);
+  }
+
+  function activateInput(input) {
+    if (!fieldControlsEnabled || !isTextInput(input) || !input.isConnected) return false;
+    activatedInputs.add(input);
+    showControlsFor(input);
+    showToast('Voice controls enabled for this field', 'success');
+    return true;
+  }
+
   document.addEventListener('focusin', e => {
     const target = getComposedTarget(e);
     if (!isTextInput(target)) return;
-    cancelHideTimer();
-    activeInput = target;
-    ensureButtons();
-    positionButtons(activeInput);
+    lastTextInput = target;
+    showControlsFor(target);
   }, true);
 
   document.addEventListener('focusout', () => {
@@ -324,14 +373,13 @@
     if (isRecording) return;
     const target = getComposedTarget(e);
     if (!isTextInput(target)) return;
-    cancelHideTimer();
-    activeInput = target;
-    ensureButtons();
-    positionButtons(activeInput);
+    showControlsFor(target);
   }, true);
 
   document.addEventListener('mouseout', e => {
     if (isRecording) return;
+    const target = getComposedTarget(e);
+    if (!activatedInputs.has(target)) return;
     const rel = e.relatedTarget;
     if (rel && (
       (micButton    && micButton.contains(rel))    ||
@@ -347,6 +395,17 @@
       if (activeInput && micButton && micButton.style.display !== 'none') positionButtons(activeInput);
     }, { passive: true });
   });
+
+  // Opt in without opening the popup: focus a field and press Alt+Shift+V.
+  document.addEventListener('keydown', e => {
+    if (e.altKey && e.shiftKey && e.key.toLowerCase() === 'v') {
+      const target = getComposedTarget(e);
+      if (activateInput(isTextInput(target) ? target : lastTextInput)) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }
+  }, true);
 
   // ---- Recording -----------------------------------------------------------
 
@@ -534,6 +593,13 @@
   let popupStartTime = 0;
 
   chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+    if (msg.action === 'activate-focused-input') {
+      const input = document.activeElement && isTextInput(document.activeElement)
+        ? document.activeElement
+        : lastTextInput;
+      sendResponse({ success: activateInput(input) });
+      return;
+    }
     if (msg.action === 'popup-record-start') {
       startPopupRecording().then(sendResponse);
       return true;

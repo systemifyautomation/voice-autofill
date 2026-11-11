@@ -54,10 +54,41 @@
     }
     .icon-btn:hover { background: rgba(255,255,255,0.28); }
     .icon-btn.hidden { display: none; }
+    .field-controls-toggle {
+      min-width: 42px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .field-controls-toggle.is-off { background: rgba(15, 23, 42, 0.35); color: rgba(255,255,255,0.72); }
 
     /* ---- Views ---- */
     .view { display: none; flex-direction: column; }
     .view.active { display: flex; }
+
+    .field-activation-bar {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 16px;
+      border-bottom: 1px solid #e8eef8;
+      background: #f8fafc;
+    }
+    #activateFieldBtn {
+      flex: 1;
+      border: 1px solid #bfdbfe;
+      border-radius: 7px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      cursor: pointer;
+      padding: 7px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      text-align: left;
+    }
+    #activateFieldBtn:hover { background: #dbeafe; }
+    #activateFieldBtn:disabled { cursor: not-allowed; opacity: 0.55; }
+    #fieldActivationStatus { color: #64748b; font-size: 10px; white-space: nowrap; }
 
     /* ---- History view ---- */
     .section-header {
@@ -499,6 +530,7 @@
       Voice Auto-fill
       <span>Powered by OpenAI Whisper</span>
     </div>
+    <button class="icon-btn field-controls-toggle" id="fieldControlsToggle" title="Turn field controls on or off" aria-pressed="true">ON</button>
     <button class="icon-btn" id="backBtn" title="Back to history">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14">
         <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -514,6 +546,11 @@
 
   <!-- History View -->
   <div class="view" id="view-history">
+
+    <div class="field-activation-bar">
+      <button id="activateFieldBtn" title="Show voice controls only on the selected text field">Enable on focused field</button>
+      <span id="fieldActivationStatus">Select a field, then enable it</span>
+    </div>
 
     <!-- Quick Record -->
     <div class="qr-bar">

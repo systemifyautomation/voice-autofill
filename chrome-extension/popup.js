@@ -13,6 +13,9 @@ const systemPromptTA     = document.getElementById('systemPrompt');
 const sheetsUrlInput     = document.getElementById('sheetsWebhookUrl');
 const whisperLanguageIn  = document.getElementById('whisperLanguage');
 const whisperPromptTA    = document.getElementById('whisperPrompt');
+const fieldControlsToggle = document.getElementById('fieldControlsToggle');
+const activateFieldBtn    = document.getElementById('activateFieldBtn');
+const fieldActivationStatus = document.getElementById('fieldActivationStatus');
 
 // ---- Init -------------------------------------------------------------------
 
@@ -20,8 +23,8 @@ const sheetLink             = document.getElementById('sheetLink');
 const spreadsheetUrlDisplay = document.getElementById('spreadsheetUrlDisplay');
 
 chrome.storage.local.get(
-  ['openaiApiKey', 'transcriptionHistory', 'selectedModel', 'systemPrompt', 'sheetsWebhookUrl', 'whisperLanguage', 'whisperPrompt', 'spreadsheetUrl'],
-  ({ openaiApiKey, transcriptionHistory, selectedModel, systemPrompt, sheetsWebhookUrl, whisperLanguage, whisperPrompt, spreadsheetUrl }) => {
+  ['openaiApiKey', 'transcriptionHistory', 'selectedModel', 'systemPrompt', 'sheetsWebhookUrl', 'whisperLanguage', 'whisperPrompt', 'spreadsheetUrl', 'fieldControlsEnabled'],
+  ({ openaiApiKey, transcriptionHistory, selectedModel, systemPrompt, sheetsWebhookUrl, whisperLanguage, whisperPrompt, spreadsheetUrl, fieldControlsEnabled }) => {
     if (openaiApiKey)     apiKeyInput.value       = openaiApiKey;
     if (selectedModel)    aiModelSel.value         = selectedModel;
     if (systemPrompt)     systemPromptTA.value     = systemPrompt;
@@ -29,6 +32,7 @@ chrome.storage.local.get(
     if (whisperLanguage)  whisperLanguageIn.value  = whisperLanguage;
     if (whisperPrompt)    whisperPromptTA.value    = whisperPrompt;
     if (spreadsheetUrl)   showSheetLink(spreadsheetUrl);
+    updateFieldControlsUI(fieldControlsEnabled !== false);
 
     if (openaiApiKey) {
       showView('history');
@@ -38,6 +42,35 @@ chrome.storage.local.get(
     }
   }
 );
+
+function updateFieldControlsUI(enabled) {
+  fieldControlsToggle.textContent = enabled ? 'ON' : 'OFF';
+  fieldControlsToggle.classList.toggle('is-off', !enabled);
+  fieldControlsToggle.setAttribute('aria-pressed', String(enabled));
+  fieldControlsToggle.title = enabled ? 'Turn field controls off' : 'Turn field controls on';
+  activateFieldBtn.disabled = !enabled;
+  fieldActivationStatus.textContent = enabled
+    ? 'Select a field, then enable it'
+    : 'Field controls are off';
+}
+
+fieldControlsToggle.addEventListener('click', () => {
+  const next = fieldControlsToggle.getAttribute('aria-pressed') !== 'true';
+  chrome.storage.local.set({ fieldControlsEnabled: next }, () => updateFieldControlsUI(next));
+});
+
+activateFieldBtn.addEventListener('click', async () => {
+  fieldActivationStatus.textContent = 'Enabling…';
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (!tab?.id) throw new Error('No active tab');
+    const response = await chrome.tabs.sendMessage(tab.id, { action: 'activate-focused-input' }, { frameId: 0 });
+    if (!response?.success) throw new Error('Focus a text field first');
+    fieldActivationStatus.textContent = 'Enabled for this field';
+  } catch (_) {
+    fieldActivationStatus.textContent = 'Focus a text field first';
+  }
+});
 
 // ---- View switching ---------------------------------------------------------
 
@@ -70,7 +103,7 @@ function renderHistory(items) {
           <path d="M12 14a3 3 0 003-3V5a3 3 0 00-6 0v6a3 3 0 003 3z" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M19 11a7 7 0 01-14 0" stroke-linecap="round"/>
         </svg>
-        <p>No transcriptions yet.<br>Click the mic on any text field to start.</p>
+        <p>No transcriptions yet.<br>Enable voice controls on a text field to start.</p>
       </div>`;
     return;
   }
@@ -171,6 +204,9 @@ function showSheetLink(url) {
 
 // Keep the link up-to-date whenever background.js saves a new spreadsheet URL
 chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'local' && changes.fieldControlsEnabled) {
+    updateFieldControlsUI(changes.fieldControlsEnabled.newValue !== false);
+  }
   if (area === 'local' && changes.spreadsheetUrl?.newValue) {
     showSheetLink(changes.spreadsheetUrl.newValue);
   }
