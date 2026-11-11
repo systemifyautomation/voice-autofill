@@ -11,28 +11,28 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Status bar button
   statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-  statusBarItem.command = 'lpe-voice-input.startRecording';
+  statusBarItem.command = 'voice-autofill.startRecording';
   statusBarItem.text = '$(mic) Voice';
-  statusBarItem.tooltip = 'Voice Input — click or press Ctrl+Shift+V';
+  statusBarItem.tooltip = 'Voice Auto-fill — click or press Ctrl+Shift+V';
   statusBarItem.show();
 
   const startRecording = vscode.commands.registerCommand(
-    'lpe-voice-input.startRecording',
+    'voice-autofill.startRecording',
     () => {
-      const config = vscode.workspace.getConfiguration('lpeVoiceInput');
+      const config = vscode.workspace.getConfiguration('voiceAutoFill');
       const apiKey = resolveApiKey();
 
       if (!apiKey) {
         vscode.window
           .showWarningMessage(
-            'LPE Voice Input: OpenAI API key not configured.',
+            'Voice Auto-fill: OpenAI API key not configured.',
             'Open Settings'
           )
           .then((action) => {
             if (action === 'Open Settings') {
               vscode.commands.executeCommand(
                 'workbench.action.openSettings',
-                'lpeVoiceInput.openaiApiKey'
+                'voiceAutoFill.openaiApiKey'
               );
             }
           });
@@ -49,7 +49,7 @@ export function activate(context: vscode.ExtensionContext) {
             await insertTranscription(transcription, config);
           } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
-            vscode.window.showErrorMessage(`Voice Input failed: ${msg}`);
+            vscode.window.showErrorMessage(`Voice Auto-fill failed: ${msg}`);
           } finally {
             setStatus('$(mic) Voice');
           }
@@ -58,10 +58,10 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const configure = vscode.commands.registerCommand('lpe-voice-input.configure', () => {
+  const configure = vscode.commands.registerCommand('voice-autofill.configure', () => {
     vscode.commands.executeCommand(
       'workbench.action.openSettings',
-      'lpeVoiceInput.openaiApiKey'
+      'voiceAutoFill.openaiApiKey'
     );
   });
 

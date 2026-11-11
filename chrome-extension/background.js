@@ -168,16 +168,16 @@ async function logToSheet(row) {
       body: JSON.stringify(row),
     });
     if (!res.ok) {
-      console.warn('[LPE] Sheet logger returned HTTP', res.status);
+      console.warn('[Voice Auto-fill] Sheet logger returned HTTP', res.status);
       return;
     }
     const data = await res.json();
     if (data.spreadsheetUrl) {
       await chrome.storage.local.set({ spreadsheetUrl: data.spreadsheetUrl });
-      console.log('[LPE] Spreadsheet URL saved:', data.spreadsheetUrl);
+      console.log('[Voice Auto-fill] Spreadsheet URL saved:', data.spreadsheetUrl);
     }
   } catch (err) {
-    console.warn('[LPE] Sheet logging failed:', err.message);
+    console.warn('[Voice Auto-fill] Sheet logging failed:', err.message);
   }
 }
 

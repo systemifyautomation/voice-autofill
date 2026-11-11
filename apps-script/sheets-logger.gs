@@ -28,7 +28,7 @@ var HEADERS = [
   'Timestamp',
   'Mode',
   'Domain',
-  'Voice Input',
+  'Voice Auto-fill',
   'Output',
   'Model',
   'Whisper Cost ($)',
@@ -109,7 +109,7 @@ function getOrCreateSheet() {
          .setBackground('#1e40af')
          .setFontColor('#ffffff');
     sheet.setFrozenRows(1);
-    sheet.setColumnWidth(4, 300); // Voice Input
+    sheet.setColumnWidth(4, 300); // Voice Auto-fill
     sheet.setColumnWidth(5, 300); // Output
   }
 

@@ -32,7 +32,7 @@ export class RecorderPanel {
 
     const panel = vscode.window.createWebviewPanel(
       'lpeVoiceRecorder',
-      'Voice Input',
+      'Voice Auto-fill',
       { viewColumn: vscode.ViewColumn.Beside, preserveFocus: true },
       {
         enableScripts: true,
@@ -99,7 +99,7 @@ export class RecorderPanel {
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy" content="${csp}" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Voice Input</title>
+  <title>Voice Auto-fill</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -226,7 +226,7 @@ export class RecorderPanel {
   </style>
 </head>
 <body>
-  <h1>Voice Input</h1>
+  <h1>Voice Auto-fill</h1>
 
   <div class="mic-wrap">
     <div class="pulse" id="pulse"></div>

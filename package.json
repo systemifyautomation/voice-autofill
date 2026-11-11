@@ -1,9 +1,9 @@
 {
-  "name": "lpe-voice-input",
+  "name": "voice-autofill",
   "displayName": "Voice Auto-fill",
-  "description": "Add a voice recording button to any text input — audio is transcribed via your n8n webhook and inserted at the cursor.",
+  "description": "Speak into a text field and have it filled automatically with OpenAI Whisper.",
   "version": "0.1.0",
-  "publisher": "lpe",
+  "publisher": "voice-autofill",
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -15,18 +15,18 @@
   "contributes": {
     "commands": [
       {
-        "command": "lpe-voice-input.startRecording",
-        "title": "Voice Input: Start Recording",
+        "command": "voice-autofill.startRecording",
+        "title": "Voice Auto-fill: Start Recording",
         "icon": "$(mic)"
       },
       {
-        "command": "lpe-voice-input.configure",
-        "title": "Voice Input: Configure Webhook URL"
+        "command": "voice-autofill.configure",
+        "title": "Voice Auto-fill: Configure"
       }
     ],
     "keybindings": [
       {
-        "command": "lpe-voice-input.startRecording",
+        "command": "voice-autofill.startRecording",
         "key": "ctrl+shift+v",
         "mac": "cmd+shift+v"
       }
@@ -34,12 +34,12 @@
     "configuration": {
       "title": "Voice Auto-fill",
       "properties": {
-        "lpeVoiceInput.openaiApiKey": {
+        "voiceAutoFill.openaiApiKey": {
           "type": "string",
           "default": "",
           "markdownDescription": "OpenAI API key (`sk-…`) used to call Whisper for transcription. Prefer setting this via the `OPENAI_API_KEY` variable in your `.env` file so it is never stored in VS Code settings."
         },
-        "lpeVoiceInput.insertTarget": {
+        "voiceAutoFill.insertTarget": {
           "type": "string",
           "default": "editor",
           "enum": [

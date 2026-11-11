@@ -1,6 +1,6 @@
 /* ---- Mic button ----------------------------------------------------------- */
 
-.lpe-mic-btn {
+.vaf-mic-btn {
   all: initial;
   position: fixed;
   z-index: 2147483647;
@@ -20,29 +20,29 @@
   box-sizing: border-box;
 }
 
-.lpe-mic-btn:hover {
+.vaf-mic-btn:hover {
   background: #1e40af;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
 }
 
-.lpe-mic-btn.lpe-recording {
+.vaf-mic-btn.vaf-recording {
   background: #dc2626;
-  animation: lpe-pulse 1.2s ease-in-out infinite;
+  animation: vaf-pulse 1.2s ease-in-out infinite;
 }
 
-.lpe-mic-btn.lpe-processing {
+.vaf-mic-btn.vaf-processing {
   background: #ea580c;
   cursor: not-allowed;
 }
 
-@keyframes lpe-pulse {
+@keyframes vaf-pulse {
   0%,  100% { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.28); }
   50%        { box-shadow: 0 2px 14px rgba(220, 38, 38, 0.6); }
 }
 
 /* ---- Chevron button ------------------------------------------------------- */
 
-.lpe-chevron-btn {
+.vaf-chevron-btn {
   all: initial;
   position: fixed;
   z-index: 2147483647;
@@ -63,11 +63,11 @@
   box-sizing: border-box;
 }
 
-.lpe-chevron-btn:hover { background: #1e40af; }
+.vaf-chevron-btn:hover { background: #1e40af; }
 
 /* ---- Dropdown menu -------------------------------------------------------- */
 
-.lpe-dropdown {
+.vaf-dropdown {
   all: initial;
   position: fixed;
   z-index: 2147483646;
@@ -80,7 +80,7 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-.lpe-dropdown-item {
+.vaf-dropdown-item {
   all: initial;
   display: block;
   width: 100%;
@@ -95,19 +95,19 @@
   transition: background 0.1s, color 0.1s;
 }
 
-.lpe-dropdown-item:hover {
+.vaf-dropdown-item:hover {
   background: #eff6ff;
   color: #1d4ed8;
 }
 
-.lpe-dropdown-item-active {
+.vaf-dropdown-item-active {
   color: #1d4ed8;
   font-weight: 700;
 }
 
 /* ---- Cancel button -------------------------------------------------------- */
 
-.lpe-cancel-btn {
+.vaf-cancel-btn {
   all: initial;
   position: fixed;
   z-index: 2147483647;
@@ -126,26 +126,26 @@
   box-sizing: border-box;
 }
 
-.lpe-cancel-btn:hover {
+.vaf-cancel-btn:hover {
   background: #b91c1c;
   transform: scale(1.12);
 }
 
 /* ---- Spinner -------------------------------------------------------------- */
 
-.lpe-spin {
-  animation: lpe-spin-anim 0.9s linear infinite;
+.vaf-spin {
+  animation: vaf-spin-anim 0.9s linear infinite;
   display: block;
 }
 
-@keyframes lpe-spin-anim {
+@keyframes vaf-spin-anim {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
 
 /* ---- Toast notifications -------------------------------------------------- */
 
-.lpe-toast {
+.vaf-toast {
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -165,10 +165,10 @@
   max-width: 320px;
 }
 
-.lpe-toast-visible {
+.vaf-toast-visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-.lpe-toast-success { background: #16a34a; }
-.lpe-toast-error   { background: #dc2626; }
+.vaf-toast-success { background: #16a34a; }
+.vaf-toast-error   { background: #dc2626; }

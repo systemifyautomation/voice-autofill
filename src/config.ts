@@ -17,7 +17,7 @@ export function loadEnv(extensionPath: string): void {
 /**
  * Resolve the OpenAI API key with this priority:
  *   1. OPENAI_API_KEY environment variable / .env file
- *   2. lpeVoiceInput.openaiApiKey VS Code setting
+ *   2. voiceAutoFill.openaiApiKey VS Code setting
  *
  * Returns an empty string if neither is set.
  */
@@ -26,7 +26,7 @@ export function resolveApiKey(): string {
   if (envKey) return envKey;
 
   const settingsKey = vscode.workspace
-    .getConfiguration('lpeVoiceInput')
+    .getConfiguration('voiceAutoFill')
     .get<string>('openaiApiKey', '')
     .trim();
   return settingsKey;

@@ -55,8 +55,8 @@
 
   function createMicButton() {
     const btn = document.createElement('button');
-    btn.className = 'lpe-mic-btn';
-    btn.title = 'Voice Input';
+    btn.className = 'vaf-mic-btn';
+    btn.title = 'Voice Auto-fill';
     btn.setAttribute('aria-label', 'Start voice input');
     btn.innerHTML = iconMic();
     btn.style.zIndex = '2147483647';
@@ -72,7 +72,7 @@
 
   function createChevronBtn() {
     const btn = document.createElement('button');
-    btn.className = 'lpe-chevron-btn';
+    btn.className = 'vaf-chevron-btn';
     btn.title = 'Change mode';
     btn.innerHTML = iconChevron();
     btn.style.zIndex = '2147483647';
@@ -95,7 +95,7 @@
 
   function createDropdown() {
     const el = document.createElement('div');
-    el.className = 'lpe-dropdown';
+    el.className = 'vaf-dropdown';
     el.style.zIndex = '2147483646';
     el.style.display = 'none';
 
@@ -104,7 +104,7 @@
       { value: 'prompt',        label: 'Instruction'   },
     ].forEach(opt => {
       const item = document.createElement('button');
-      item.className = 'lpe-dropdown-item';
+      item.className = 'vaf-dropdown-item';
       item.dataset.value = opt.value;
       item.addEventListener('mousedown', e => { e.preventDefault(); e.stopPropagation(); });
       item.addEventListener('click', () => {
@@ -122,9 +122,9 @@
 
   function updateDropdownItems() {
     if (!dropdownEl) return;
-    dropdownEl.querySelectorAll('.lpe-dropdown-item').forEach(item => {
+    dropdownEl.querySelectorAll('.vaf-dropdown-item').forEach(item => {
       const active = item.dataset.value === voiceMode;
-      item.className = 'lpe-dropdown-item' + (active ? ' lpe-dropdown-item-active' : '');
+      item.className = 'vaf-dropdown-item' + (active ? ' vaf-dropdown-item-active' : '');
       const labels = { transcription: 'Transcription', prompt: 'Instruction' };
       item.textContent = (active ? '✓  ' : '     ') + labels[item.dataset.value];
     });
@@ -160,7 +160,7 @@
 
   function createCancelButton() {
     const btn = document.createElement('button');
-    btn.className = 'lpe-cancel-btn';
+    btn.className = 'vaf-cancel-btn';
     btn.title = 'Cancel';
     btn.setAttribute('aria-label', 'Cancel');
     btn.innerHTML = iconX();
@@ -207,7 +207,7 @@
 
   function iconSpinner() {
     return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-        width="14" height="14" class="lpe-spin" aria-hidden="true">
+        width="14" height="14" class="vaf-spin" aria-hidden="true">
       <path d="M12 2a10 10 0 1 0 10 10" stroke-linecap="round"/>
     </svg>`;
   }
@@ -449,7 +449,7 @@
     mediaRecorder.start(100);
 
     isRecording = true;
-    micButton.classList.add('lpe-recording');
+    micButton.classList.add('vaf-recording');
     micButton.innerHTML = iconStop();
     micButton.title = 'Stop recording';
     micButton.setAttribute('aria-label', 'Stop recording');
@@ -460,8 +460,8 @@
     if (!mediaRecorder || mediaRecorder.state === 'inactive') return;
     mediaRecorder.stop();
     isRecording = false;
-    micButton.classList.remove('lpe-recording');
-    micButton.classList.add('lpe-processing');
+    micButton.classList.remove('vaf-recording');
+    micButton.classList.add('vaf-processing');
     micButton.innerHTML = iconSpinner();
     micButton.title = voiceMode === 'prompt' ? 'Processing with AI…' : 'Transcribing…';
   }
@@ -520,9 +520,9 @@
 
   function resetMicButton() {
     if (!micButton) return;
-    micButton.classList.remove('lpe-recording', 'lpe-processing');
+    micButton.classList.remove('vaf-recording', 'vaf-processing');
     micButton.innerHTML = iconMic();
-    micButton.title = 'Voice Input';
+    micButton.title = 'Voice Auto-fill';
     micButton.setAttribute('aria-label', 'Start voice input');
   }
 
@@ -650,12 +650,12 @@
 
   function showToast(message, type = 'info') {
     const toast = document.createElement('div');
-    toast.className = `lpe-toast lpe-toast-${type}`;
+    toast.className = `vaf-toast vaf-toast-${type}`;
     toast.textContent = message;
     (document.documentElement || document.body).appendChild(toast);
-    requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('lpe-toast-visible')));
+    requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('vaf-toast-visible')));
     setTimeout(() => {
-      toast.classList.remove('lpe-toast-visible');
+      toast.classList.remove('vaf-toast-visible');
       setTimeout(() => toast.remove(), 300);
     }, 3500);
   }
